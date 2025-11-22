@@ -349,7 +349,7 @@ const themeDefaults = {
 };
 let paletteRequestId = 0;
 
-const REMOTE_STORAGE_ENDPOINT = "./api/storage";
+const REMOTE_STORAGE_ENDPOINT = "/functions/api/storage";
 let remoteSyncEnabled = false;
 const STORAGE_KEYS_TO_SYNC = new Set([
     "playlistSongs",
