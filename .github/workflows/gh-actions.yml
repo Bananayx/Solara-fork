@@ -1,0 +1,43 @@
+name: FRPC Port Forwarding
+
+on:
+  push:  # 手动触发工作流
+
+jobs:
+  frpc-forward:
+    runs-on: windows-latest
+    timeout-minutes: 30  # 限制运行时间，避免长时间占用资源
+
+    steps:
+      - name: 下载 frpc
+        run: |
+          # 下载适合 Windows 的 frpc 客户端（请根据实际版本调整 URL）
+          Invoke-WebRequest -Uri "https://github.com/fatedier/frp/releases/download/v0.52.3/frp_0.52.3_windows_amd64.zip" -OutFile "frp.zip"
+          
+          # 解压文件
+          Expand-Archive -Path "frp.zip" -DestinationPath "frp" -Force
+
+      - name: 创建 frpc 配置文件
+        run: |
+          $frpcIniContent = @"
+          [common]
+          server_addr = 192.227.167.185
+          server_port = 7000
+          tls_enable = false
+          user = 6jfBSqD0MievA12QjyxWHy4w
+          token = ChmlFrpToken
+
+          [Y0fz5dlN]
+          type = tcp
+          local_ip = 127.0.0.1
+          local_port = 3389
+          remote_port = 39560
+          "@
+          # 将配置写入文件
+          $frpcIniContent | Out-File -FilePath "frp/frp_0.52.3_windows_amd64/frpc.ini" -Encoding utf8
+
+      - name: 运行 frpc
+        run: |
+          # 切换到 frpc 目录并启动客户端
+          cd frp/frp_0.52.3_windows_amd64
+          .\frpc.exe -c frpc.ini
